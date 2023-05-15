@@ -32,7 +32,8 @@ func ProcessCoords(coords string) (float64, float64, error) {
 	return lat, long, nil
 }
 
-// Check that only a single
+// Check that only a single flag is in use. Returns bools for which flag
+// flag has been set as coords, city
 func CheckFlags(coordFlag string, cityFlag string) (bool, bool, error) {
 	// Set default values
 	runCity := true

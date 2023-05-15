@@ -79,9 +79,13 @@ var ForecastCmd = &cobra.Command{
 	Long:  ``,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Check API key is valid
+		if apiKey == "" {
+			fmt.Println("Cannot get API Key from env, check the OWM_API_KEY env variable is corretly set")
+			return
+		}
+
 		err := owm.ValidAPIKey(apiKey)
 		if err != nil {
-			fmt.Println(err)
 			log.Fatal(err)
 			return
 		}
@@ -89,7 +93,6 @@ var ForecastCmd = &cobra.Command{
 		// Set default values
 		runCoords, runCity, err = utils.CheckFlags(coords, city)
 		if err != nil {
-			fmt.Println(err.Error())
 			log.Fatal(err)
 			return
 		}
@@ -98,7 +101,7 @@ var ForecastCmd = &cobra.Command{
 		// Create weather forcast object
 		w, err := owm.NewForecast("5", "C", "en", apiKey)
 		if err != nil {
-			fmt.Println(err)
+			fmt.Println("Bad API Key")
 			log.Fatalln(err)
 			return
 		}

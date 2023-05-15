@@ -44,6 +44,7 @@ func getCoords(w *owm.CurrentWeatherData) {
 
 	tmpl, err := template.New("current").Parse(currentTemplate)
 	if err != nil {
+		fmt.Println("Bad JSON returned from request")
 		return
 	}
 
@@ -55,6 +56,7 @@ func getCity(w *owm.CurrentWeatherData) {
 
 	tmpl, err := template.New("current").Parse(currentTemplate)
 	if err != nil {
+		fmt.Println("Bad JSON returned from request")
 		return
 	}
 
@@ -68,6 +70,11 @@ var CurrentCmd = &cobra.Command{
 	Long:  ``,
 	PreRun: func(cmd *cobra.Command, args []string) {
 		// Check API key is valid
+		if apiKey == "" {
+			fmt.Println("Cannot get API Key from env, check the OWM_API_KEY env variable is corretly set")
+			return
+		}
+
 		err := owm.ValidAPIKey(apiKey)
 		if err != nil {
 			fmt.Println(err)
@@ -86,8 +93,7 @@ var CurrentCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		w, err := owm.NewCurrent("c", "en", apiKey)
 		if err != nil {
-			fmt.Println("herere")
-			fmt.Println(err.Error())
+			fmt.Println("Bad API Key")
 			log.Fatal(err)
 			return
 		}
