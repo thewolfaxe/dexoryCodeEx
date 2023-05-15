@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-// Take in lat,long style coordinates and output two float64's for lat and long instead
+// Take in lat,long in a string style coordinates and output two float64's for lat and long instead
 func ProcessCoords(coords string) (float64, float64, error) {
 	// Split input coords on comma
 	co := strings.Split(coords, ",")

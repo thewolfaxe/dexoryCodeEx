@@ -33,31 +33,42 @@ Wind Dir:    {{.Wind.Deg}}°
 {{end}}
 `
 
+// Calls the weathermap forecast api and prints to terminal for a city
 func getCity(w *owm.ForecastWeatherData) {
+	// API call
 	w.DailyByName(city, 40)
 
+	// Decode data
 	forcast := w.ForecastWeatherJson.(*owm.Forecast5WeatherData)
 
+	// Check data is valid
 	if forcast.City.Name == "" {
 		fmt.Println("Invalid arguments, please double check them")
 		fmt.Println("Have you entered coordinates to the city flag? Or mistyped the city name?")
 		return
 	}
 
+	// Parse output template
 	tmpl, err := template.New("forecast").Parse(forecastTemplate)
 	if err != nil {
-		fmt.Println("Bad JSON returned from forecast request")
+		fmt.Println("Bad template")
 		return
 	}
 
-	tmpl.Execute(os.Stdout, forcast)
+	// Parse API repsonse and print to stdout
+	err = tmpl.Execute(os.Stdout, forcast)
+	if err != nil {
+		fmt.Println("BAD JSON response")
+	}
 
 }
 
+// Calls the weathermap forecast api and prints to terminal for a set of GPS coordinates
 func getCoords(w *owm.ForecastWeatherData) {
+	// Get coordinates from user input
 	lat, long, err := utils.ProcessCoords(coords)
 	if err != nil {
-		// error handled in function
+		// input error handled in function
 		return
 	}
 
@@ -67,15 +78,21 @@ func getCoords(w *owm.ForecastWeatherData) {
 		Latitude:  long,
 	}, 40)
 
+	// Decode data
 	forcast := w.ForecastWeatherJson.(*owm.Forecast5WeatherData)
 
+	// Parse output template
 	tmpl, err := template.New("forecast").Parse(forecastTemplate)
 	if err != nil {
 		fmt.Println("Bad JSON returned from forecast request")
 		return
 	}
 
-	tmpl.Execute(os.Stdout, forcast)
+	// Parse API response and print to terminal
+	err = tmpl.Execute(os.Stdout, forcast)
+	if err != nil {
+		fmt.Println("BAD JSON response")
+	}
 }
 
 // ForecastCmd represents the forecast command
@@ -89,14 +106,13 @@ var ForecastCmd = &cobra.Command{
 			fmt.Println("Cannot get API Key from env, check the OWM_API_KEY env variable is corretly set")
 			return
 		}
-
 		err := owm.ValidAPIKey(apiKey)
 		if err != nil {
 			log.Fatal(err)
 			return
 		}
 
-		// Set default values
+		// See what flags user set
 		runCoords, runCity, err = utils.CheckFlags(coords, city)
 		if err != nil {
 			log.Fatal(err)

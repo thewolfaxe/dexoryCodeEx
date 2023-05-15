@@ -27,11 +27,14 @@ func Execute() {
 	}
 }
 
+// Add custom commands
 func addSubcommandPalettes() {
 	rootCmd.AddCommand(forecast.ForecastCmd)
 	rootCmd.AddCommand(current.CurrentCmd)
 }
 
+// User init called
 func init() {
+	// Add custom commands
 	addSubcommandPalettes()
 }
