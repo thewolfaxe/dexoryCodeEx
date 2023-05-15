@@ -23,9 +23,9 @@ var (
 
 const currentTemplate = `Current weather for {{.Name}}:
     Conditions: {{range .Weather}} {{.Description}} {{end}}
-    Now:         {{.Main.Temp}} {{.Unit}}
-    High:        {{.Main.TempMax}} {{.Unit}}
-    Low:         {{.Main.TempMin}} {{.Unit}}
+    Now:         {{.Main.Temp}}°C
+    High:        {{.Main.TempMax}}°C
+    Low:         {{.Main.TempMin}}°C
     Wind speed:  {{.Wind.Speed}}m/s
     Wind Dir:    {{.Wind.Deg}}°
 `
@@ -52,7 +52,12 @@ func getCoords(w *owm.CurrentWeatherData) {
 }
 
 func getCity(w *owm.CurrentWeatherData) {
-	w.CurrentByName(city)
+	// Can be pretty sure if all these are true, an invalid argument has been passed to it
+	if (w.Name == "") && (w.Main.Temp == 0.0) && (w.Main.TempMin == 0.0) && (w.Wind.Deg == 0) {
+		fmt.Println("Invalid arguments, please double check them")
+		fmt.Println("Have you entered coordinates to the city flag? Or mistyped the city name?")
+		return
+	}
 
 	tmpl, err := template.New("current").Parse(currentTemplate)
 	if err != nil {
@@ -85,7 +90,6 @@ var CurrentCmd = &cobra.Command{
 		// Set default values
 		runCoords, runCity, err = utils.CheckFlags(coords, city)
 		if err != nil {
-			fmt.Println(err.Error())
 			log.Fatal(err)
 			return
 		}

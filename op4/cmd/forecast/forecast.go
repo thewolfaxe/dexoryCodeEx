@@ -24,9 +24,9 @@ var apiKey = os.Getenv("OWM_API_KEY")
 const forecastTemplate = `Weather Forecast for {{.City.Name}}:
 {{range .List}}Date & Time: {{.DtTxt}}
 Conditions:  {{range .Weather}}{{.Description}}{{end}}
-Temp:        {{.Main.Temp}} 
-High:        {{.Main.TempMax}} 
-Low:         {{.Main.TempMin}}
+Temp:        {{.Main.Temp}}°C
+High:        {{.Main.TempMax}}°C
+Low:         {{.Main.TempMin}}°C
 Wind speed:  {{.Wind.Speed}}m/s
 Wind Dir:    {{.Wind.Deg}}°
 
@@ -37,6 +37,12 @@ func getCity(w *owm.ForecastWeatherData) {
 	w.DailyByName(city, 40)
 
 	forcast := w.ForecastWeatherJson.(*owm.Forecast5WeatherData)
+
+	if forcast.City.Name == "" {
+		fmt.Println("Invalid arguments, please double check them")
+		fmt.Println("Have you entered coordinates to the city flag? Or mistyped the city name?")
+		return
+	}
 
 	tmpl, err := template.New("forecast").Parse(forecastTemplate)
 	if err != nil {

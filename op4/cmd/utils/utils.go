@@ -16,7 +16,7 @@ func ProcessCoords(coords string) (float64, float64, error) {
 	// Convert latitude to float64
 	lat, err := strconv.ParseFloat(co[0], 64)
 	if err != nil {
-		fmt.Println("Invalid latitude value")
+		fmt.Println("Cannot parse coordinates, are they entered in the correct format?")
 		log.Fatal(err)
 		return 0, 0, err
 	}
@@ -24,7 +24,7 @@ func ProcessCoords(coords string) (float64, float64, error) {
 	// Convert longitude to float64
 	long, err := strconv.ParseFloat(co[1], 64)
 	if err != nil {
-		fmt.Println("Invalid longitude value")
+		fmt.Println("Cannot parse coordinates, are they entered in the correct format?")
 		log.Fatal(err)
 		return 0, 0, err
 	}
